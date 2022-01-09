@@ -1,0 +1,119 @@
+{
+  "dependencies": {
+    "http": "http:"
+  },
+  "schema": {
+    "types": [
+      {
+        "name": "Root",
+        "actions": [
+          { "name": "configure", "type": "String", "params": [{ "name": "apiToken", "type": "String" }] },
+          { "name": "webhook", "type": "String", "params": [
+            { "name": "body", "type": "String" },
+            { "name": "path", "type": "String" },
+            { "name": "query", "type": "String" },
+            { "name": "method", "type": "String" }
+          ]}
+        ],
+        "fields": [
+          { "name": "app", "type": "App", "params": [{ "name": "id", "type": "String" }] }
+        ]
+      },
+      {
+        "name": "App",
+        "fields": [
+          { "name": "channel", "type": "Channel", "params": [{ "name": "name", "type": "String" }] },
+          { "name": "trigger", "type": "Trigger", "params": [{ "name": "response_url", "type": "String" }, { "name": "trigger_id", "type": "String"}] },
+          { "name": "view", "type": "View", "params": [{ "name": "external_id", "type": "String" }] }
+        ],
+        "events": [
+          { "name": "onCommand", "params": [{ "name": "command", "type": "String" }], "type": "CommandEvent" }
+        ]
+      },
+      {
+        "name": "Trigger",
+        "fields": [],
+        "actions": [
+          { "name": "respond", "params": [{ "name": "json", "type": "string" }, { "name": "text", "type": "string" }], "type": "Void" },
+          { "name": "openView", "params": [{ "name": "view", "type": "string" }], "type": "Ref", "ofType": "View" }
+        ]
+      },
+      {
+        "name": "Channel",
+        "fields": [],
+        "actions": [
+          { "name": "sendMessage", "params": [{ "name": "body", "type": "string" }], "type": "Void" }
+        ]
+      },
+      {
+        "name": "User",
+        "fields": [],
+        "actions": [
+          { "name": "sendMessage", "params": [{ "name": "body", "type": "string" }], "type": "Void" }
+        ]
+      },
+      {
+        "name": "Team",
+        "fields": [],
+        "actions": []
+      },
+      {
+        "name": "View",
+        "events": [
+          { "name": "onSubmit", "type": "SubmitEvent" }
+        ],
+        "actions": [
+          { "name": "update", "params": [{ "name": "view", "type": "string" }], "type": "Void" }
+        ]
+      },
+      {
+        "name": "CommandEvent",
+        "fields": [
+          { "name": "trigger", "type": "Ref", "ofType": "Trigger" },
+
+          { "name": "token", "type": "String" },
+          { "name": "command", "type": "String" },
+          { "name": "text", "type": "String" },
+          { "name": "response_url", "type": "String" },
+          { "name": "trigger_id", "type": "String" },
+
+          { "name": "user", "type": "Ref", "ofType": "User" },
+          { "name": "user_id", "type": "String" },
+          { "name": "user_name", "type": "String" },
+
+          { "name": "team", "type": "Ref", "ofType": "Team" },
+          { "name": "team_id", "type": "String" },
+          { "name": "team_domain", "type": "String" },
+
+          { "name": "channel", "type": "Ref", "ofType": "Channel" },
+          { "name": "channel_id", "type": "String" },
+          { "name": "channel_name", "type": "String" },
+
+          { "name": "api_app_id", "type": "String" },
+          { "name": "enterprise_id", "type": "String" },
+          { "name": "enterprise_name", "type": "String" },
+          { "name": "is_enterprise_install", "type": "String" }
+        ],
+        "actions": [
+          { "name": "showModal", "params": [{ "name": "blocks", "type": "String" }], "type": "Void" }
+        ]
+      },
+      {
+        "name": "SubmitEvent",
+        "fields": [
+          { "name": "state", "type": "String" },
+
+          { "name": "user", "type": "Ref", "ofType": "User" },
+          { "name": "user_id", "type": "String" },
+          { "name": "user_name", "type": "String" },
+
+          { "name": "team", "type": "Ref", "ofType": "Team" },
+          { "name": "team_id", "type": "String" },
+          { "name": "team_domain", "type": "String" },
+
+          { "name": "event", "type": "String" }
+        ]
+      }
+    ]
+  }
+}
