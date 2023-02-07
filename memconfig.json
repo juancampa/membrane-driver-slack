@@ -296,12 +296,30 @@
               {
                 "name": "text",
                 "type": "String"
+              },
+              {
+                "name": "attachments",
+                "type": "String"
+              },
+              {
+                "name": "blocks",
+                "type": "String"
               }
             ]
           },
           {
             "name": "leave",
             "type": "Void"
+          }
+        ],
+        "events": [
+          {
+            "name": "onSlashCommand",
+            "type": "SlashCommand"
+          },
+          {
+            "name": "onEvent",
+            "type": "WebhookEvent"
           }
         ]
       },
@@ -432,7 +450,26 @@
             "type": "Profile"
           }
         ],
-        "actions": []
+        "actions": [
+          {
+            "name": "sendMessage",
+            "type": "Void",
+            "params": [
+              {
+                "name": "text",
+                "type": "String"
+              },
+              {
+                "name": "attachments",
+                "type": "String"
+              },
+              {
+                "name": "blocks",
+                "type": "String"
+              }
+            ]
+          }
+        ]
       },
       {
         "name": "Profile",
@@ -697,6 +734,28 @@
           {
             "name": "last_set",
             "type": "Int"
+          }
+        ]
+      },
+      {
+        "name": "SlashCommand",
+        "fields": [
+          {
+            "name": "url",
+            "type": "String"
+          },
+          {
+            "name": "text",
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "WebhookEvent",
+        "fields": [
+          {
+            "name": "event",
+            "type": "String"
           }
         ]
       }

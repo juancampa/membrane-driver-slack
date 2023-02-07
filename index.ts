@@ -54,18 +54,13 @@ export const Root = {
         return [root.channels.one({ id })];
       }
       case "message": {
+        // Fix the bug where the message is not parsed correctly
         const [id] = value.match(/[^"]*$/g);
-        // return [root.channels.one({ id }).messages.one({ ts: id })];
+        [root.channels.one({ id }).messages.one({ ts: id })];
       }
     }
     return [];
   },
-  // dm: async ({ self, args: { users } }) => {
-  //   const { id } = self.$argsAt(root.channels.one);
-  //   await api("POST", "conversations.open", null, {
-  //     users,
-  //   });
-  // }
 };
 
 export const ChannelCollection = {
@@ -167,6 +162,17 @@ export const User = {
   gref: ({ obj }) => {
     return root.users.one({ id: obj.id });
   },
+  sendMessage: async ({ self, args }) => {
+    const { id } = self.$argsAt(root.users.one);
+    const res = await api("POST", "conversations.open", null, {
+      users: id,
+    });
+    const { channel } = await res.json();
+    await api("POST", "chat.postMessage", null, {
+      channel: channel.id,
+      ...args,
+    });
+  },
 };
 
 export const Channel = {
@@ -210,3 +216,51 @@ export const Message = {
     return root.channels.one({ id }).messages.one({ ts: obj.ts });
   },
 };
+
+export async function endpoint({ args: { path, body } }) {
+  if (!body || !path) {
+    return;
+  }
+  switch (path) {
+    // Setup url for events:
+    // https://api.slack.com/apps/<appid>/event-subscriptions
+    case "/events": {
+      const event = JSON.parse(body);
+      switch (event.type) {
+        case "url_verification":
+          return JSON.stringify({
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ challenge: event.challenge }),
+          });
+        case "event_callback":
+          // Emit event to channel.
+          // Pass event as string for now, handle parsing in event handler.
+          await root.channels
+            .one({ id: event.event.channel })
+            .onEvent.$emit({ event: JSON.stringify(event) });
+          return JSON.stringify({ status: 200 });
+        default:
+          console.log("Unknown Event:", event.type);
+          return JSON.stringify({ status: 200 });
+      }
+    }
+    // Setup url for slash commands:
+    // https://api.slack.com/apps/<appid>/slash-commands
+    case "/commands": {
+      const { response_url: url, text, channel_id } = parseQS(body);
+      await root.channels.one({ id: channel_id }).onSlashCommand.$emit({ text, url });
+      // Return replace_original: "true", in event handler to update the message.
+      return "Processing...";
+    }
+    default:
+      console.log("Unknown Endpoint:", path);
+  }
+  return;
+}
+
+// Parse Query String
+export const parseQS = (qs: string): Record<string, string> =>
+  Object.fromEntries(new URLSearchParams(qs).entries());
