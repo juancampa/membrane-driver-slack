@@ -26,6 +26,7 @@
     "types": [
       {
         "name": "Root",
+        "description": "Connect to Slack and interact with channels and messages.",
         "actions": [
           {
             "name": "configure",
