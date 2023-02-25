@@ -1,4 +1,24 @@
 {
+  "expressions": {
+    "user": {
+      "description": "User",
+      "type": "text",
+      "searchIn": "https://app.slack.com",
+      "regex": "data-message-sender=\"([^\"]+)"
+    },
+    "channel": {
+      "description": "Conversation",
+      "type": "text",
+      "searchIn": "https://app.slack.com",
+      "regex": "data-qa-channel-sidebar-channel-id=\"([^\"]+)"
+    },
+    "message": {
+      "description": "Message",
+      "type": "text",
+      "searchIn": "https://app.slack.com",
+      "regex": "data-ts=\"([^\"]+)"
+    }
+  },
   "dependencies": {
     "http": "http:"
   },
@@ -6,112 +26,738 @@
     "types": [
       {
         "name": "Root",
+        "description": "Connect to Slack and interact with channels and messages.",
         "actions": [
-          { "name": "configure", "type": "String", "params": [{ "name": "apiToken", "type": "String" }] },
-          { "name": "webhook", "type": "String", "params": [
-            { "name": "body", "type": "String" },
-            { "name": "path", "type": "String" },
-            { "name": "query", "type": "String" },
-            { "name": "method", "type": "String" }
-          ]}
+          {
+            "name": "configure",
+            "type": "String",
+            "params": [
+              {
+                "name": "apiToken",
+                "type": "String"
+              }
+            ]
+          },
+          {
+            "name": "endpoint",
+            "type": "String",
+            "hints": {
+              "hidden": true
+            },
+            "params": [
+              {
+                "name": "method",
+                "type": "String"
+              },
+              {
+                "name": "body",
+                "type": "String"
+              },
+              {
+                "name": "path",
+                "type": "String"
+              },
+              {
+                "name": "query",
+                "type": "String"
+              },
+              {
+                "name": "headers",
+                "type": "String"
+              }
+            ]
+          }
         ],
         "fields": [
-          { "name": "app", "type": "App", "params": [{ "name": "id", "type": "String" }] }
+          {
+            "name": "status",
+            "type": "String"
+          },
+          {
+            "name": "channels",
+            "type": "ChannelCollection"
+          },
+          {
+            "name": "users",
+            "type": "UserCollection"
+          },
+          {
+            "name": "parse",
+            "type": "List",
+            "hints": {
+              "hidden": true
+            },
+            "ofType": {
+              "type": "Ref",
+              "ofType": "User"
+            },
+            "params": [
+              {
+                "name": "name",
+                "type": "String"
+              },
+              {
+                "name": "value",
+                "type": "String"
+              }
+            ]
+          }
         ]
       },
       {
-        "name": "App",
+        "name": "ChannelCollection",
         "fields": [
-          { "name": "channel", "type": "Channel", "params": [{ "name": "name", "type": "String" }] },
-          { "name": "trigger", "type": "Trigger", "params": [{ "name": "response_url", "type": "String" }, { "name": "trigger_id", "type": "String"}] },
-          { "name": "view", "type": "View", "params": [{ "name": "external_id", "type": "String" }] }
+          {
+            "name": "one",
+            "type": "Channel",
+            "params": [
+              {
+                "name": "id",
+                "type": "String"
+              }
+            ]
+          },
+          {
+            "name": "page",
+            "type": "ChannelPage",
+            "params": [
+              {
+                "name": "cursor",
+                "type": "String"
+              },
+              {
+                "name": "limit",
+                "type": "Int"
+              }
+            ]
+          }
         ],
-        "events": [
-          { "name": "onCommand", "params": [{ "name": "command", "type": "String" }], "type": "CommandEvent" }
+        "actions": [
+          {
+            "name": "create",
+            "type": "Void",
+            "params": [
+              {
+                "name": "name",
+                "type": "String"
+              },
+              {
+                "name": "is_private",
+                "type": "Boolean"
+              }
+            ]
+          }
         ]
       },
       {
-        "name": "Trigger",
-        "fields": [],
-        "actions": [
-          { "name": "respond", "params": [{ "name": "json", "type": "string" }, { "name": "text", "type": "string" }], "type": "Void" },
-          { "name": "openView", "params": [{ "name": "view", "type": "string" }], "type": "Ref", "ofType": "View" }
+        "name": "ChannelPage",
+        "fields": [
+          {
+            "name": "items",
+            "type": "List",
+            "ofType": "Channel"
+          },
+          {
+            "name": "next",
+            "type": "Ref",
+            "ofType": "ChannelPage"
+          }
         ]
       },
       {
         "name": "Channel",
-        "fields": [],
+        "fields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "hints": {
+              "primary": true
+            }
+          },
+          {
+            "name": "is_channel",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_group",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_im",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_mpim",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_private",
+            "type": "Boolean"
+          },
+          {
+            "name": "created",
+            "type": "Int"
+          },
+          {
+            "name": "is_archived",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_general",
+            "type": "Boolean"
+          },
+          {
+            "name": "unlinked",
+            "type": "Int"
+          },
+          {
+            "name": "is_shared",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_org_shared",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_pending_ext_shared",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_read_only",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_thread_only",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_member",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_ext_shared",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_non_threadable",
+            "type": "Boolean"
+          },
+          {
+            "name": "shared_team_ids",
+            "type": "List",
+            "ofType": "String"
+          },
+          {
+            "name": "pending_connected_team_ids",
+            "type": "List",
+            "ofType": "String"
+          },
+          {
+            "name": "previous_names",
+            "type": "List",
+            "ofType": "String"
+          },
+          {
+            "name": "topic",
+            "type": "Topic"
+          },
+          {
+            "name": "purpose",
+            "type": "Topic"
+          },
+          {
+            "name": "members",
+            "type": "MemberCollection"
+          },
+          {
+            "name": "messages",
+            "type": "MessageCollection"
+          }
+        ],
         "actions": [
-          { "name": "sendMessage", "params": [{ "name": "body", "type": "string" }], "type": "Void" }
+          {
+            "name": "invite",
+            "type": "Void",
+            "params": [
+              {
+                "name": "users",
+                "description": "A comma separated list of user IDs. Up to 30 users may be listed.",
+                "type": "String"
+              }
+            ]
+          },
+          {
+            "name": "sendMessage",
+            "type": "Void",
+            "params": [
+              {
+                "name": "text",
+                "type": "String"
+              },
+              {
+                "name": "attachments",
+                "type": "String"
+              },
+              {
+                "name": "blocks",
+                "type": "String"
+              }
+            ]
+          },
+          {
+            "name": "leave",
+            "type": "Void"
+          }
+        ],
+        "events": [
+          {
+            "name": "onSlashCommand",
+            "type": "SlashCommand"
+          },
+          {
+            "name": "onEvent",
+            "type": "WebhookEvent"
+          }
+        ]
+      },
+      {
+        "name": "UserCollection",
+        "fields": [
+          {
+            "name": "one",
+            "type": "User",
+            "params": [
+              {
+                "name": "id",
+                "type": "String"
+              }
+            ]
+          },
+          {
+            "name": "page",
+            "type": "UserPage",
+            "params": [
+              {
+                "name": "cursor",
+                "type": "String"
+              },
+              {
+                "name": "limit",
+                "type": "Int"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "UserPage",
+        "fields": [
+          {
+            "name": "items",
+            "type": "List",
+            "ofType": "User"
+          },
+          {
+            "name": "next",
+            "type": "Ref",
+            "ofType": "UserPage"
+          }
         ]
       },
       {
         "name": "User",
-        "fields": [],
-        "actions": [
-          { "name": "sendMessage", "params": [{ "name": "body", "type": "string" }], "type": "Void" }
-        ]
-      },
-      {
-        "name": "Team",
-        "fields": [],
-        "actions": []
-      },
-      {
-        "name": "View",
-        "events": [
-          { "name": "onSubmit", "type": "SubmitEvent" }
+        "fields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "name",
+            "type": "String",
+            "hints": {
+              "primary": true
+            }
+          },
+          {
+            "name": "team_id",
+            "type": "String"
+          },
+          {
+            "name": "deleted",
+            "type": "Boolean"
+          },
+          {
+            "name": "color",
+            "type": "String"
+          },
+          {
+            "name": "real_name",
+            "type": "String"
+          },
+          {
+            "name": "tz",
+            "type": "String"
+          },
+          {
+            "name": "tz_label",
+            "type": "String"
+          },
+          {
+            "name": "tz_offset",
+            "type": "Int"
+          },
+          {
+            "name": "is_admin",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_owner",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_primary_owner",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_restricted",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_ultra_restricted",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_bot",
+            "type": "Boolean"
+          },
+          {
+            "name": "is_app_user",
+            "type": "Boolean"
+          },
+          {
+            "name": "updated",
+            "type": "Int"
+          },
+          {
+            "name": "has_2fa",
+            "type": "Boolean"
+          },
+          {
+            "name": "profile",
+            "type": "Profile"
+          }
         ],
         "actions": [
-          { "name": "update", "params": [{ "name": "view", "type": "string" }], "type": "Void" }
+          {
+            "name": "sendMessage",
+            "type": "Void",
+            "params": [
+              {
+                "name": "text",
+                "type": "String"
+              },
+              {
+                "name": "attachments",
+                "type": "String"
+              },
+              {
+                "name": "blocks",
+                "type": "String"
+              }
+            ]
+          }
         ]
       },
       {
-        "name": "CommandEvent",
+        "name": "Profile",
         "fields": [
-          { "name": "trigger", "type": "Ref", "ofType": "Trigger" },
-
-          { "name": "token", "type": "String" },
-          { "name": "command", "type": "String" },
-          { "name": "text", "type": "String" },
-          { "name": "response_url", "type": "String" },
-          { "name": "trigger_id", "type": "String" },
-
-          { "name": "user", "type": "Ref", "ofType": "User" },
-          { "name": "user_id", "type": "String" },
-          { "name": "user_name", "type": "String" },
-
-          { "name": "team", "type": "Ref", "ofType": "Team" },
-          { "name": "team_id", "type": "String" },
-          { "name": "team_domain", "type": "String" },
-
-          { "name": "channel", "type": "Ref", "ofType": "Channel" },
-          { "name": "channel_id", "type": "String" },
-          { "name": "channel_name", "type": "String" },
-
-          { "name": "api_app_id", "type": "String" },
-          { "name": "enterprise_id", "type": "String" },
-          { "name": "enterprise_name", "type": "String" },
-          { "name": "is_enterprise_install", "type": "String" }
-        ],
-        "actions": [
-          { "name": "showModal", "params": [{ "name": "blocks", "type": "String" }], "type": "Void" }
+          {
+            "name": "real_name",
+            "type": "String"
+          },
+          {
+            "name": "real_name_normalized",
+            "type": "String"
+          },
+          {
+            "name": "display_name",
+            "type": "String"
+          },
+          {
+            "name": "display_name_normalized",
+            "type": "String"
+          },
+          {
+            "name": "status_text",
+            "type": "String"
+          },
+          {
+            "name": "status_emoji",
+            "type": "String"
+          },
+          {
+            "name": "avatar_hash",
+            "type": "String"
+          },
+          {
+            "name": "image_original",
+            "type": "String"
+          },
+          {
+            "name": "email",
+            "type": "String"
+          },
+          {
+            "name": "image_24",
+            "type": "String"
+          },
+          {
+            "name": "image_32",
+            "type": "String"
+          },
+          {
+            "name": "image_48",
+            "type": "String"
+          },
+          {
+            "name": "image_72",
+            "type": "String"
+          },
+          {
+            "name": "image_192",
+            "type": "String"
+          },
+          {
+            "name": "image_512",
+            "type": "String"
+          }
         ]
       },
       {
-        "name": "SubmitEvent",
+        "name": "MemberCollection",
         "fields": [
-          { "name": "state", "type": "String" },
-
-          { "name": "user", "type": "Ref", "ofType": "User" },
-          { "name": "user_id", "type": "String" },
-          { "name": "user_name", "type": "String" },
-
-          { "name": "team", "type": "Ref", "ofType": "Team" },
-          { "name": "team_id", "type": "String" },
-          { "name": "team_domain", "type": "String" },
-
-          { "name": "event", "type": "String" }
+          {
+            "name": "one",
+            "type": "User",
+            "params": [
+              {
+                "name": "id",
+                "type": "String"
+              }
+            ]
+          },
+          {
+            "name": "page",
+            "type": "MemberPage",
+            "params": [
+              {
+                "name": "cursor",
+                "type": "String"
+              },
+              {
+                "name": "limit",
+                "type": "Int"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "MemberPage",
+        "fields": [
+          {
+            "name": "items",
+            "type": "List",
+            "ofType": "User"
+          },
+          {
+            "name": "next",
+            "type": "Ref",
+            "ofType": "MemberPage"
+          }
+        ]
+      },
+      {
+        "name": "MessageCollection",
+        "fields": [
+          {
+            "name": "one",
+            "type": "Message",
+            "params": [
+              {
+                "name": "ts",
+                "type": "String"
+              }
+            ]
+          },
+          {
+            "name": "page",
+            "type": "MessagePage",
+            "params": [
+              {
+                "name": "latest",
+                "type": "String"
+              },
+              {
+                "name": "limit",
+                "type": "Int"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "name": "MessagePage",
+        "fields": [
+          {
+            "name": "items",
+            "type": "List",
+            "ofType": "Message"
+          },
+          {
+            "name": "next",
+            "type": "Ref",
+            "ofType": "MemberPage"
+          }
+        ]
+      },
+      {
+        "name": "Message",
+        "fields": [
+          {
+            "name": "type",
+            "type": "String"
+          },
+          {
+            "name": "subtype",
+            "type": "String"
+          },
+          {
+            "name": "ts",
+            "type": "String"
+          },
+          {
+            "name": "user",
+            "type": "String"
+          },
+          {
+            "name": "username",
+            "type": "String"
+          },
+          {
+            "name": "bot_id",
+            "type": "String"
+          },
+          {
+            "name": "deleted_ts",
+            "type": "String"
+          },
+          {
+            "name": "text",
+            "type": "String",
+            "hints": {
+              "primary": true
+            }
+          },
+          {
+            "name": "bot_profile",
+            "type": "BotProfile"
+          },
+          {
+            "name": "reactions",
+            "type": "List",
+            "ofType": "Reaction"
+          }
+        ]
+      },
+      {
+        "name": "BotProfile",
+        "fields": [
+          {
+            "name": "id",
+            "type": "String"
+          },
+          {
+            "name": "deleted",
+            "type": "Boolean"
+          },
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "updated",
+            "type": "Int"
+          },
+          {
+            "name": "app_id",
+            "type": "String"
+          },
+          {
+            "name": "team_id",
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "Reaction",
+        "fields": [
+          {
+            "name": "name",
+            "type": "String"
+          },
+          {
+            "name": "count",
+            "type": "Int"
+          },
+          {
+            "name": "users",
+            "type": "List",
+            "ofType": "String"
+          }
+        ]
+      },
+      {
+        "name": "Topic",
+        "fields": [
+          {
+            "name": "value",
+            "type": "String"
+          },
+          {
+            "name": "creator",
+            "type": "String"
+          },
+          {
+            "name": "last_set",
+            "type": "Int"
+          }
+        ]
+      },
+      {
+        "name": "SlashCommand",
+        "fields": [
+          {
+            "name": "url",
+            "type": "String"
+          },
+          {
+            "name": "text",
+            "type": "String"
+          }
+        ]
+      },
+      {
+        "name": "WebhookEvent",
+        "fields": [
+          {
+            "name": "event",
+            "type": "String"
+          }
         ]
       }
     ]

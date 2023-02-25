@@ -1,118 +1,266 @@
-const { http } = M.nodes;
-export const state: any = {};
+import fetch from "node-fetch";
+import { state, nodes, root } from "membrane";
 
-const api = async (method: 'GET' | 'POST', path: string, body?: string | object) => {
-  const headers = {
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${state.token}`
-  };
-  const res = await http.resource({
+async function api(method: "GET" | "POST", path: string, query?: any, body?: string | object) {
+  if (query) {
+    Object.keys(query).forEach((key) => (query[key] === undefined ? delete query[key] : {}));
+  }
+  const querystr = query && Object.keys(query).length ? `?${new URLSearchParams(query)}` : "";
+
+  return await fetch(`https://slack.com/api/${path}${querystr}`, {
     method,
-    url: 'https://slack.com/api/' + path,
-    headers: JSON.stringify(headers),
-    body: typeof body === 'object' ? JSON.stringify(body) : body
-  }).$query('{ body }');
-  return res.body
+    body: typeof body === "object" ? JSON.stringify(body) : body,
+    headers: {
+      Authorization: `Bearer ${state.token}`,
+      "Content-Type": "application/json",
+    },
+  });
 }
-let next_external_id = 1;
 
 export const Root = {
   configure: async ({ args }) => {
     state.token = args.apiToken;
-    let res = await api('GET', 'auth.test');
+    let res = await api("GET", "auth.test");
     try {
-      const { ok, user, user_id, team, team_id, error } = JSON.parse(res);
+      const { ok, user, user_id, team, team_id, error } = await res
+        .json()
+        .then((json: any) => json && json);
       if (ok) {
-        return `Configured for user "${user}" (${user_id}) on team "${team}" (${team_id})"`
+        return `Configured for user "${user}" (${user_id}) on team "${team}" (${team_id})"`;
       } else {
         return `Failed to configure: ${error}`;
       }
     } catch (e) {
-      return `Failed to parse slack response: ${res}`
+      return `Failed to parse slack response: ${res}`;
     }
   },
-
-  webhook: async ({ args: { method, path, body }}) => {
-    if (!body || !path || !method) {
-      return;
-    }
-
-    let event = JSON.parse(body);
-    let type;
-    if (!event.api_app_id && event.payload) {
-      event = JSON.parse(event.payload);
-      type = event.type;
+  status() {
+    if (!state.token) {
+      return "Please [configure the Slack token](https://api.slack.com/authentication/token-types#bot)";
     } else {
-      type = 'command';
+      return `Ready`;
     }
-    const app = M.root.app({ id: event.api_app_id });
-    console.log(`Webhook type ${type}`);
-
-    switch (type) {
-      case "command": {
-        const { response_url, trigger_id } = event;
-        event.trigger = app.trigger({ response_url, trigger_id });
-        event.channel = app.channel({ name: event.channel_name });
-        app.onCommand({ command: event.command }).$emit(event);
-        break;
-      }
-      case "view_submission": {
-        const { view: { external_id, state, trigger_id } } = event;
-        const e = {
-          state: JSON.stringify(event.view.state),
-          user: null, // TODO
-          user_id: event.user.id,
-          user_name: event.user.name,
-          team: null, // TODO
-          team_id: event.team.id,
-          team_domain: event.team.domain,
-          event: body
-        };
-        event.trigger = app.trigger({ trigger_id });
-        app.view({ external_id }).onSubmit.$emit(e);
-        break;
-      }
-    }
-
-    return ``;
   },
-}
+  channels: () => ({}),
+  users: () => ({}),
+  parse({ args: { name, value } }) {
+    switch (name) {
+      case "user": {
+        const [id] = value.match(/[^"]*$/g);
+        return [root.users.one({ id })];
+      }
+      case "channel": {
+        const [id] = value.match(/[^"]*$/g);
+        return [root.channels.one({ id })];
+      }
+      case "message": {
+        // Fix the bug where the message is not parsed correctly
+        const [id] = value.match(/[^"]*$/g);
+        [root.channels.one({ id }).messages.one({ ts: id })];
+      }
+    }
+    return [];
+  },
+};
 
-export const View = {
-  async update({ self, args: { view: viewJson } }) {
-    const { external_id } = self.$argsAt(M.root.app.view);
-    const view = JSON.parse(viewJson);
-    view.external_id = external_id;
-    await api("POST", "views.update", { external_id, view });
-  }
-}
+export const ChannelCollection = {
+  one: async ({ args: { id } }) => {
+    const res = await api("GET", "conversations.info", {
+      channel: id,
+    });
+    const { channel } = await res.json();
+    return channel;
+  },
+  page: async ({ self, args }) => {
+    const res = await api("GET", "conversations.list", {
+      ...args,
+    });
+    const { channels, response_metadata } = await res.json();
+    return {
+      items: channels,
+      next: self.page({ cursor: response_metadata.next_cursor }),
+    };
+  },
+  create: async ({ args: { name, is_private } }) => {
+    await api("POST", "conversations.create", null, {
+      name,
+      is_private,
+    });
+  },
+};
+
+export const UserCollection = {
+  one: async ({ args: { id } }) => {
+    const res = await api("GET", "users.info", {
+      user: id,
+    });
+    const { user } = await res.json();
+    return user;
+  },
+  page: async ({ self, args }) => {
+    const res = await api("GET", "users.list", {
+      ...args,
+    });
+    const { members, response_metadata } = await res.json();
+    return {
+      items: members,
+      next: self.page({ cursor: response_metadata.next_cursor }),
+    };
+  },
+};
+
+export const MemberCollection = {
+  one: async ({ args: { id } }) => {
+    const res = await api("GET", "users.info", {
+      user: id,
+    });
+    const { user } = await res.json();
+    return user;
+  },
+  page: async ({ self, args }) => {
+    const { id } = self.$argsAt(root.channels.one);
+    const res = await api("GET", "conversations.members", {
+      ...args,
+      channel: id,
+    });
+    const { members, response_metadata } = await res.json();
+    return {
+      items: members.map((id) => ({ id })),
+      next: self.page({ cursor: response_metadata.next_cursor }),
+    };
+  },
+};
+
+export const MessageCollection = {
+  one: async ({ self, args: { ts } }) => {
+    const { id } = self.$argsAt(root.channels.one);
+    const res = await api("GET", "conversations.history", {
+      latest: ts,
+      limit: 1,
+      inclusive: true,
+      channel: id,
+    });
+    const { messages } = await res.json();
+    return messages[0];
+  },
+  page: async ({ self, args }) => {
+    const { id } = self.$argsAt(root.channels.one);
+    const res = await api("GET", "conversations.history", {
+      ...args,
+      channel: id,
+    });
+    const { messages } = await res.json();
+    const lastMessage = messages[messages.length - 1];
+    return {
+      items: messages,
+      next: self.page({ latest: lastMessage.ts, limit: args.limit }),
+    };
+  },
+};
+
+export const User = {
+  gref: ({ obj }) => {
+    return root.users.one({ id: obj.id });
+  },
+  sendMessage: async ({ self, args }) => {
+    const { id } = self.$argsAt(root.users.one);
+    const res = await api("POST", "conversations.open", null, {
+      users: id,
+    });
+    const { channel } = await res.json();
+    await api("POST", "chat.postMessage", null, {
+      channel: channel.id,
+      ...args,
+    });
+  },
+};
 
 export const Channel = {
-  async sendMessage({ self, args: { body } }) {
-    const { name } = self.$argsAt(M.root.app.channel);
+  gref: ({ obj }) => {
+    return root.channels.one({ id: obj.id });
+  },
+  members: () => ({}),
+  // to read messages, /invite @bot to the channel
+  messages: () => ({}),
+  invite: async ({ self, args: { users } }) => {
+    const { id } = self.$argsAt(root.channels.one);
+    await api("POST", "conversations.invite", null, {
+      channel: id,
+      users: users,
+    });
+  },
+  leave: async ({ self }) => {
+    const { id } = self.$argsAt(root.channels.one);
+    await api("POST", "conversations.leave", null, {
+      channel: id,
+    });
+  },
+  sendMessage: async ({ self, args }) => {
+    const { id } = self.$argsAt(root.channels.one);
+    await api("POST", "chat.postMessage", null, {
+      channel: id,
+      ...args,
+    });
+  },
+};
+
+export const Member = {
+  gref: ({ obj }) => {
+    return root.users.one({ id: obj.id });
+  },
+};
+
+export const Message = {
+  gref: ({ self, obj }) => {
+    const { id } = self.$argsAt(root.channels.one);
+    return root.channels.one({ id }).messages.one({ ts: obj.ts });
+  },
+};
+
+export async function endpoint({ args: { path, body } }) {
+  if (!body || !path) {
+    return;
   }
+  switch (path) {
+    // Setup url for events:
+    // https://api.slack.com/apps/<appid>/event-subscriptions
+    case "/events": {
+      const event = JSON.parse(body);
+      switch (event.type) {
+        case "url_verification":
+          return JSON.stringify({
+            status: 200,
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ challenge: event.challenge }),
+          });
+        case "event_callback":
+          // Emit event to channel.
+          // Pass event as string for now, handle parsing in event handler.
+          await root.channels
+            .one({ id: event.event.channel })
+            .onEvent.$emit({ event: JSON.stringify(event) });
+          return JSON.stringify({ status: 200 });
+        default:
+          console.log("Unknown Event:", event.type);
+          return JSON.stringify({ status: 200 });
+      }
+    }
+    // Setup url for slash commands:
+    // https://api.slack.com/apps/<appid>/slash-commands
+    case "/commands": {
+      const { response_url: url, text, channel_id } = parseQS(body);
+      await root.channels.one({ id: channel_id }).onSlashCommand.$emit({ text, url });
+      // Return replace_original: "true", in event handler to update the message.
+      return "Processing...";
+    }
+    default:
+      console.log("Unknown Endpoint:", path);
+  }
+  return;
 }
 
-export const Trigger = {
-  async respond({ self, args: { json, text } }) {
-    const { response_url } = self.$argsAt(M.root.app.trigger);
-    const contentType = json ? 'application/json' : 'text/plain';
-    const body = json ? json : JSON.stringify({ text });
-    await http.resource({
-      url: response_url,
-      method: 'POST', 
-      headers: JSON.stringify({ 'Content-Type': contentType }),
-      body
-    }).$query('{ body }');
-  },
-
-  async openView({ self, args: { view: viewJson } }) {
-    const { id: app_id } = self.$argsAt(M.root.app);
-    const { trigger_id } = self.$argsAt(M.root.app.trigger);
-    const view = JSON.parse(viewJson);
-    const external_id = view.external_id = view.external_id || `view-${next_external_id++}`;
-    await api("POST", "views.open", { trigger_id, view });
-    return M.root.app({ id: app_id }).view({ external_id });
-  },
-
-}
+// Parse Query String
+export const parseQS = (qs: string): Record<string, string> =>
+  Object.fromEntries(new URLSearchParams(qs).entries());
