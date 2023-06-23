@@ -262,5 +262,5 @@ export async function endpoint({ args: { path, body } }) {
 }
 
 // Parse Query String
-export const parseQS = (qs: string): Record<string, string> =>
+const parseQS = (qs: string): Record<string, string> =>
   Object.fromEntries(new URLSearchParams(qs).entries());

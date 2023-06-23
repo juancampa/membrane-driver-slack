@@ -51,7 +51,8 @@
               },
               {
                 "name": "body",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "path",
@@ -59,7 +60,8 @@
               },
               {
                 "name": "query",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "headers",
@@ -123,11 +125,13 @@
             "params": [
               {
                 "name": "cursor",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "limit",
-                "type": "Int"
+                "type": "Int",
+                "optional": true
               }
             ]
           }
@@ -143,7 +147,8 @@
               },
               {
                 "name": "is_private",
-                "type": "Boolean"
+                "type": "Boolean",
+                "optional": true
               }
             ]
           }
@@ -300,11 +305,13 @@
               },
               {
                 "name": "attachments",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "blocks",
-                "type": "String"
+                "type": "String",
+                "optional": true
               }
             ]
           },
@@ -343,11 +350,13 @@
             "params": [
               {
                 "name": "cursor",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "limit",
-                "type": "Int"
+                "type": "Int",
+                "optional": true
               }
             ]
           }
@@ -556,11 +565,13 @@
             "params": [
               {
                 "name": "cursor",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "limit",
-                "type": "Int"
+                "type": "Int",
+                "optional": true
               }
             ]
           }
@@ -600,11 +611,13 @@
             "params": [
               {
                 "name": "latest",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "limit",
-                "type": "Int"
+                "type": "Int",
+                "optional": true
               }
             ]
           }
@@ -759,6 +772,9 @@
             "type": "String"
           }
         ]
+      },
+      {
+        "name": "Member"
       }
     ]
   }
