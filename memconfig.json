@@ -103,6 +103,10 @@
                 "type": "String"
               }
             ]
+          },
+          {
+            "name": "tests",
+            "type": "Tests"
           }
         ]
       },
@@ -775,6 +779,19 @@
       },
       {
         "name": "Member"
+      },
+      {
+        "name": "Tests",
+        "actions": [
+          {
+            "name": "testGetChannels",
+            "type": "Boolean"
+          },
+          {
+            "name": "testGetUsers",
+            "type": "Boolean"
+          }
+        ]
       }
     ]
   }

@@ -61,6 +61,18 @@ export const Root = {
     }
     return [];
   },
+  tests: () => ({}),
+};
+
+export const Tests = {
+  testGetChannels: async () => {
+    const channels = await root.channels.page.items.$query(`{ id }`);
+    return Array.isArray(channels);
+  },
+  testGetUsers: async () => {
+    const users = await root.users.page.items.$query(`{ id }`);
+    return Array.isArray(users) && (users.length === 0 || users.length > 0);
+  },
 };
 
 export const ChannelCollection = {
