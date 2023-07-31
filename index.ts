@@ -67,7 +67,7 @@ export const Root = {
 export const Tests = {
   testGetChannels: async () => {
     const channels = await root.channels.page.items.$query(`{ id }`);
-    return Array.isArray(channels) && (channels.length === 0 || channels.length > 0);
+    return Array.isArray(channels);
   },
   testGetUsers: async () => {
     const users = await root.users.page.items.$query(`{ id }`);
