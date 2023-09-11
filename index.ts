@@ -1,11 +1,18 @@
-import fetch from "node-fetch";
 import { state, nodes, root } from "membrane";
 
-async function api(method: "GET" | "POST", path: string, query?: any, body?: string | object) {
+async function api(
+  method: "GET" | "POST",
+  path: string,
+  query?: any,
+  body?: string | object
+) {
   if (query) {
-    Object.keys(query).forEach((key) => (query[key] === undefined ? delete query[key] : {}));
+    Object.keys(query).forEach((key) =>
+      query[key] === undefined ? delete query[key] : {}
+    );
   }
-  const querystr = query && Object.keys(query).length ? `?${new URLSearchParams(query)}` : "";
+  const querystr =
+    query && Object.keys(query).length ? `?${new URLSearchParams(query)}` : "";
 
   return await fetch(`https://slack.com/api/${path}${querystr}`, {
     method,
@@ -18,7 +25,7 @@ async function api(method: "GET" | "POST", path: string, query?: any, body?: str
 }
 
 export const Root = {
-  configure: async ({ args }) => {
+  configure: async (args) => {
     state.token = args.apiToken;
     let res = await api("GET", "auth.test");
     try {
@@ -43,7 +50,7 @@ export const Root = {
   },
   channels: () => ({}),
   users: () => ({}),
-  parse({ args: { name, value } }) {
+  parse({ name, value }) {
     switch (name) {
       case "user": {
         const [id] = value.match(/[^"]*$/g);
@@ -76,14 +83,14 @@ export const Tests = {
 };
 
 export const ChannelCollection = {
-  one: async ({ args: { id } }) => {
+  one: async ({ id }) => {
     const res = await api("GET", "conversations.info", {
       channel: id,
     });
     const { channel } = await res.json();
     return channel;
   },
-  page: async ({ self, args }) => {
+  page: async (args, { self }) => {
     const res = await api("GET", "conversations.list", {
       ...args,
     });
@@ -93,7 +100,7 @@ export const ChannelCollection = {
       next: self.page({ cursor: response_metadata.next_cursor }),
     };
   },
-  create: async ({ args: { name, is_private } }) => {
+  create: async ({ name, is_private }) => {
     await api("POST", "conversations.create", null, {
       name,
       is_private,
@@ -102,14 +109,14 @@ export const ChannelCollection = {
 };
 
 export const UserCollection = {
-  one: async ({ args: { id } }) => {
+  one: async ({ id }) => {
     const res = await api("GET", "users.info", {
       user: id,
     });
     const { user } = await res.json();
     return user;
   },
-  page: async ({ self, args }) => {
+  page: async (args, { self }) => {
     const res = await api("GET", "users.list", {
       ...args,
     });
@@ -122,14 +129,14 @@ export const UserCollection = {
 };
 
 export const MemberCollection = {
-  one: async ({ args: { id } }) => {
+  one: async ({ id }) => {
     const res = await api("GET", "users.info", {
       user: id,
     });
     const { user } = await res.json();
     return user;
   },
-  page: async ({ self, args }) => {
+  page: async (args, { self }) => {
     const { id } = self.$argsAt(root.channels.one);
     const res = await api("GET", "conversations.members", {
       ...args,
@@ -144,7 +151,7 @@ export const MemberCollection = {
 };
 
 export const MessageCollection = {
-  one: async ({ self, args: { ts } }) => {
+  one: async ({ ts }, { self }) => {
     const { id } = self.$argsAt(root.channels.one);
     const res = await api("GET", "conversations.history", {
       latest: ts,
@@ -155,7 +162,7 @@ export const MessageCollection = {
     const { messages } = await res.json();
     return messages[0];
   },
-  page: async ({ self, args }) => {
+  page: async (args, { self }) => {
     const { id } = self.$argsAt(root.channels.one);
     const res = await api("GET", "conversations.history", {
       ...args,
@@ -171,10 +178,10 @@ export const MessageCollection = {
 };
 
 export const User = {
-  gref: ({ obj }) => {
+  gref: (_, { obj }) => {
     return root.users.one({ id: obj.id });
   },
-  sendMessage: async ({ self, args }) => {
+  sendMessage: async (args, { self }) => {
     const { id } = self.$argsAt(root.users.one);
     const res = await api("POST", "conversations.open", null, {
       users: id,
@@ -188,26 +195,26 @@ export const User = {
 };
 
 export const Channel = {
-  gref: ({ obj }) => {
+  gref: (_, { obj }) => {
     return root.channels.one({ id: obj.id });
   },
   members: () => ({}),
   // to read messages, /invite @bot to the channel
   messages: () => ({}),
-  invite: async ({ self, args: { users } }) => {
+  invite: async ({ users }, { self }) => {
     const { id } = self.$argsAt(root.channels.one);
     await api("POST", "conversations.invite", null, {
       channel: id,
       users: users,
     });
   },
-  leave: async ({ self }) => {
+  leave: async (_, { self }) => {
     const { id } = self.$argsAt(root.channels.one);
     await api("POST", "conversations.leave", null, {
       channel: id,
     });
   },
-  sendMessage: async ({ self, args }) => {
+  sendMessage: async (args, { self }) => {
     const { id } = self.$argsAt(root.channels.one);
     await api("POST", "chat.postMessage", null, {
       channel: id,
@@ -217,19 +224,19 @@ export const Channel = {
 };
 
 export const Member = {
-  gref: ({ obj }) => {
+  gref: (_, { obj }) => {
     return root.users.one({ id: obj.id });
   },
 };
 
 export const Message = {
-  gref: ({ self, obj }) => {
+  gref: (_, { self, obj }) => {
     const { id } = self.$argsAt(root.channels.one);
     return root.channels.one({ id }).messages.one({ ts: obj.ts });
   },
 };
 
-export async function endpoint({ args: { path, body } }) {
+export async function endpoint({ path, body }) {
   if (!body || !path) {
     return;
   }
@@ -263,7 +270,9 @@ export async function endpoint({ args: { path, body } }) {
     // https://api.slack.com/apps/<appid>/slash-commands
     case "/commands": {
       const { response_url: url, text, channel_id } = parseQS(body);
-      await root.channels.one({ id: channel_id }).onSlashCommand.$emit({ text, url });
+      await root.channels
+        .one({ id: channel_id })
+        .onSlashCommand.$emit({ text, url });
       // Return replace_original: "true", in event handler to update the message.
       return "Processing...";
     }
