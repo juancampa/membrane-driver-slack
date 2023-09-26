@@ -78,7 +78,7 @@ export const Tests = {
   },
   testGetUsers: async () => {
     const users = await root.users.page.items.$query(`{ id }`);
-    return Array.isArray(users) && (users.length === 0 || users.length > 0);
+    return Array.isArray(users);
   },
 };
 
