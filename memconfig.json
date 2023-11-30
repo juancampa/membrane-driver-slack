@@ -351,11 +351,13 @@
         "events": [
           {
             "name": "onSlashCommand",
-            "type": "SlashCommand"
+            "type": "SlashCommand",
+            "description": "Slash command in the Membrane Slack Driver."
           },
           {
             "name": "onEvent",
-            "type": "WebhookEvent"
+            "type": "WebhookEvent",
+            "description": "Webhook event in the Membrane Slack Driver."
           }
         ],
         "description": "Channel in the Membrane Slack Driver."
@@ -488,7 +490,8 @@
           },
           {
             "name": "profile",
-            "type": "Profile"
+            "type": "Profile",
+            "description": "Profile in the Membrane Slack Driver."
           }
         ],
         "actions": [
@@ -508,7 +511,8 @@
                 "name": "blocks",
                 "type": "String"
               }
-            ]
+            ],
+            "description": "Sends a message to the user with the specified text, attachments, and blocks for formatting."
           }
         ],
         "description": "User in the Membrane Slack Driver."
@@ -760,16 +764,19 @@
         "fields": [
           {
             "name": "name",
-            "type": "String"
+            "type": "String",
+            "description": "Reaction name in the Membrane Slack Driver."
           },
           {
             "name": "count",
-            "type": "Int"
+            "type": "Int",
+            "description": "Number of reactions in the Membrane Slack Driver."
           },
           {
             "name": "users",
             "type": "List",
-            "ofType": "String"
+            "ofType": "String",
+            "description": "List of users who reacted in the Membrane Slack Driver."
           }
         ],
         "description": "Reaction in the Membrane Slack Driver."
@@ -779,15 +786,18 @@
         "fields": [
           {
             "name": "value",
-            "type": "String"
+            "type": "String",
+            "description": "Topic value in the Membrane Slack Driver."
           },
           {
             "name": "creator",
-            "type": "String"
+            "type": "String",
+            "description": "Creator of the topic in the Membrane Slack Driver."
           },
           {
             "name": "last_set",
-            "type": "Int"
+            "type": "Int",
+            "description": "Timestamp of the last set topic in the Membrane Slack Driver."
           }
         ],
         "description": "Topic in the Membrane Slack Driver."
@@ -797,11 +807,13 @@
         "fields": [
           {
             "name": "url",
-            "type": "String"
+            "type": "String",
+            "description": "URL associated with the slash command in the Membrane Slack Driver."
           },
           {
             "name": "text",
-            "type": "String"
+            "type": "String",
+            "description": "Text associated with the slash command in the Membrane Slack Driver."
           }
         ],
         "description": "Slash command in the Membrane Slack Driver."
