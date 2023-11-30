@@ -26,7 +26,7 @@
     "types": [
       {
         "name": "Root",
-        "description": "Connect to Slack and interact with channels and messages.",
+        "description": "The root type of the membrane-driver-slack program.",
         "actions": [
           {
             "name": "configure",
@@ -36,7 +36,8 @@
                 "name": "apiToken",
                 "type": "String"
               }
-            ]
+            ],
+            "description": "Configures the Slack API token for authentication and interaction with Slack channels and messages."
           },
           {
             "name": "endpoint",
@@ -67,21 +68,25 @@
                 "name": "headers",
                 "type": "String"
               }
-            ]
+            ],
+            "description": "Invoked when an HTTP request is received for the Slack driver, allowing interaction with Slack channels and messages."
           }
         ],
         "fields": [
           {
             "name": "status",
-            "type": "String"
+            "type": "String",
+            "description": "The status of the Slack driver, indicating its current state of operation."
           },
           {
             "name": "channels",
-            "type": "ChannelCollection"
+            "type": "ChannelCollection",
+            "description": "Collection of channels available in the Slack workspace for interaction and messaging."
           },
           {
             "name": "users",
-            "type": "UserCollection"
+            "type": "UserCollection",
+            "description": "Collection of users available in the Slack workspace for interaction and messaging."
           },
           {
             "name": "parse",
@@ -102,11 +107,13 @@
                 "name": "value",
                 "type": "String"
               }
-            ]
+            ],
+            "description": "List of user-defined parsing rules for processing Slack messages and interactions."
           },
           {
             "name": "tests",
-            "type": "Tests"
+            "type": "Tests",
+            "description": "Tests for the functionality and integration of the Slack driver with Slack channels and messages."
           }
         ]
       },
@@ -121,7 +128,8 @@
                 "name": "id",
                 "type": "String"
               }
-            ]
+            ],
+            "description": "Retrieves a single channel from the collection based on the provided channel ID."
           },
           {
             "name": "page",
@@ -137,7 +145,8 @@
                 "type": "Int",
                 "optional": true
               }
-            ]
+            ],
+            "description": "Retrieves a page of channels from the collection, with optional cursor and limit parameters for pagination."
           }
         ],
         "actions": [
@@ -154,9 +163,11 @@
                 "type": "Boolean",
                 "optional": true
               }
-            ]
+            ],
+            "description": "Creates a new channel in the Slack workspace with the specified name and privacy settings."
           }
-        ]
+        ],
+        "description": "Collection of channels in the Membrane Slack Driver."
       },
       {
         "name": "ChannelPage",
@@ -164,48 +175,58 @@
           {
             "name": "items",
             "type": "List",
-            "ofType": "Channel"
+            "ofType": "Channel",
+            "description": "List of channels included in the current page of the channel collection."
           },
           {
             "name": "next",
             "type": "Ref",
-            "ofType": "ChannelPage"
+            "ofType": "ChannelPage",
+            "description": "Reference to the next page of channels in the channel collection for pagination."
           }
-        ]
+        ],
+        "description": "Page of channels in the Membrane Slack Driver."
       },
       {
         "name": "Channel",
         "fields": [
           {
             "name": "id",
-            "type": "String"
+            "type": "String",
+            "description": "The unique identifier of the channel within the Slack workspace."
           },
           {
             "name": "name",
             "type": "String",
             "hints": {
               "primary": true
-            }
+            },
+            "description": "The name of the channel within the Slack workspace."
           },
           {
             "name": "is_channel",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates whether the channel is a public channel in the Slack workspace."
           },
           {
             "name": "is_group",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates whether the channel is a private group in the Slack workspace."
           },
           {
             "name": "is_im",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates whether the channel is a direct message (IM) channel in the Slack workspace."
           },
           {
             "name": "is_mpim",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates whether the channel is a multi-party IM (MPIM) channel in the Slack workspace."
           },
           {
             "name": "is_private",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates whether the channel is a private channel in the Slack workspace."
           },
           {
             "name": "created",
@@ -297,7 +318,8 @@
                 "description": "A comma separated list of user IDs. Up to 30 users may be listed.",
                 "type": "String"
               }
-            ]
+            ],
+            "description": "Invites the specified users to the channel by providing their user IDs in a comma-separated list."
           },
           {
             "name": "sendMessage",
@@ -317,11 +339,13 @@
                 "type": "String",
                 "optional": true
               }
-            ]
+            ],
+            "description": "Sends a message to the channel with the specified text, attachments, and blocks for formatting."
           },
           {
             "name": "leave",
-            "type": "Void"
+            "type": "Void",
+            "description": "Leaves the channel, removing the driver from the channel's member list."
           }
         ],
         "events": [
@@ -333,7 +357,8 @@
             "name": "onEvent",
             "type": "WebhookEvent"
           }
-        ]
+        ],
+        "description": "Channel in the Membrane Slack Driver."
       },
       {
         "name": "UserCollection",
@@ -364,7 +389,8 @@
               }
             ]
           }
-        ]
+        ],
+        "description": "Collection of users in the Membrane Slack Driver."
       },
       {
         "name": "UserPage",
@@ -379,7 +405,8 @@
             "type": "Ref",
             "ofType": "UserPage"
           }
-        ]
+        ],
+        "description": "Page of users in the Membrane Slack Driver."
       },
       {
         "name": "User",
@@ -483,7 +510,8 @@
               }
             ]
           }
-        ]
+        ],
+        "description": "User in the Membrane Slack Driver."
       },
       {
         "name": "Profile",
@@ -548,7 +576,8 @@
             "name": "image_512",
             "type": "String"
           }
-        ]
+        ],
+        "description": "Profile in the Membrane Slack Driver."
       },
       {
         "name": "MemberCollection",
@@ -579,7 +608,8 @@
               }
             ]
           }
-        ]
+        ],
+        "description": "Collection of members in the Membrane Slack Driver."
       },
       {
         "name": "MemberPage",
@@ -594,7 +624,8 @@
             "type": "Ref",
             "ofType": "MemberPage"
           }
-        ]
+        ],
+        "description": "Page of members in the Membrane Slack Driver."
       },
       {
         "name": "MessageCollection",
@@ -625,7 +656,8 @@
               }
             ]
           }
-        ]
+        ],
+        "description": "Collection of messages in the Membrane Slack Driver."
       },
       {
         "name": "MessagePage",
@@ -640,7 +672,8 @@
             "type": "Ref",
             "ofType": "MemberPage"
           }
-        ]
+        ],
+        "description": "Page of messages in the Membrane Slack Driver."
       },
       {
         "name": "Message",
@@ -689,7 +722,8 @@
             "type": "List",
             "ofType": "Reaction"
           }
-        ]
+        ],
+        "description": "Message in the Membrane Slack Driver."
       },
       {
         "name": "BotProfile",
@@ -718,7 +752,8 @@
             "name": "team_id",
             "type": "String"
           }
-        ]
+        ],
+        "description": "Bot profile in the Membrane Slack Driver."
       },
       {
         "name": "Reaction",
@@ -736,7 +771,8 @@
             "type": "List",
             "ofType": "String"
           }
-        ]
+        ],
+        "description": "Reaction in the Membrane Slack Driver."
       },
       {
         "name": "Topic",
@@ -753,7 +789,8 @@
             "name": "last_set",
             "type": "Int"
           }
-        ]
+        ],
+        "description": "Topic in the Membrane Slack Driver."
       },
       {
         "name": "SlashCommand",
@@ -766,7 +803,8 @@
             "name": "text",
             "type": "String"
           }
-        ]
+        ],
+        "description": "Slash command in the Membrane Slack Driver."
       },
       {
         "name": "WebhookEvent",
@@ -775,10 +813,12 @@
             "name": "event",
             "type": "String"
           }
-        ]
+        ],
+        "description": "Webhook event in the Membrane Slack Driver."
       },
       {
-        "name": "Member"
+        "name": "Member",
+        "description": "Member in the Membrane Slack Driver."
       },
       {
         "name": "Tests",
@@ -791,7 +831,8 @@
             "name": "testGetUsers",
             "type": "Boolean"
           }
-        ]
+        ],
+        "description": "Tests for the Membrane Slack Driver."
       }
     ]
   }
