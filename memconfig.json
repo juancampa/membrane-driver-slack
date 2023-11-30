@@ -26,7 +26,7 @@
     "types": [
       {
         "name": "Root",
-        "description": "The root type of the membrane-driver-slack program.",
+        "description": "Type representing the root of the Slack driver.",
         "actions": [
           {
             "name": "configure",
@@ -167,7 +167,7 @@
             "description": "Creates a new channel in the Slack workspace with the specified name and privacy settings."
           }
         ],
-        "description": "Collection of channels in the Membrane Slack Driver."
+        "description": "Collection of channels in the Slack workspace."
       },
       {
         "name": "ChannelPage",
@@ -185,7 +185,7 @@
             "description": "Reference to the next page of channels in the channel collection for pagination."
           }
         ],
-        "description": "Page of channels in the Membrane Slack Driver."
+        "description": "Page of channels in the Slack workspace."
       },
       {
         "name": "Channel",
@@ -360,7 +360,7 @@
             "description": "Webhook event in the Membrane Slack Driver."
           }
         ],
-        "description": "Channel in the Membrane Slack Driver."
+        "description": "Representation of a Slack channel."
       },
       {
         "name": "UserCollection",
@@ -392,7 +392,7 @@
             ]
           }
         ],
-        "description": "Collection of users in the Membrane Slack Driver."
+        "description": "Collection of users in the Slack workspace."
       },
       {
         "name": "UserPage",
@@ -408,7 +408,7 @@
             "ofType": "UserPage"
           }
         ],
-        "description": "Page of users in the Membrane Slack Driver."
+        "description": "Page of users in the Slack workspace."
       },
       {
         "name": "User",
@@ -515,7 +515,7 @@
             "description": "Sends a message to the user with the specified text, attachments, and blocks for formatting."
           }
         ],
-        "description": "User in the Membrane Slack Driver."
+        "description": "Representation of a Slack user."
       },
       {
         "name": "Profile",
@@ -581,7 +581,7 @@
             "type": "String"
           }
         ],
-        "description": "Profile in the Membrane Slack Driver."
+        "description": "Profile information of a Slack user."
       },
       {
         "name": "MemberCollection",
@@ -613,7 +613,7 @@
             ]
           }
         ],
-        "description": "Collection of members in the Membrane Slack Driver."
+        "description": "Collection of members in a Slack channel."
       },
       {
         "name": "MemberPage",
@@ -629,7 +629,7 @@
             "ofType": "MemberPage"
           }
         ],
-        "description": "Page of members in the Membrane Slack Driver."
+        "description": "Page of members in a Slack channel."
       },
       {
         "name": "MessageCollection",
@@ -661,7 +661,7 @@
             ]
           }
         ],
-        "description": "Collection of messages in the Membrane Slack Driver."
+        "description": "Collection of messages in a Slack channel."
       },
       {
         "name": "MessagePage",
@@ -677,7 +677,7 @@
             "ofType": "MemberPage"
           }
         ],
-        "description": "Page of messages in the Membrane Slack Driver."
+        "description": "Page of messages in a Slack channel."
       },
       {
         "name": "Message",
@@ -727,7 +727,7 @@
             "ofType": "Reaction"
           }
         ],
-        "description": "Message in the Membrane Slack Driver."
+        "description": "Representation of a message in a Slack channel."
       },
       {
         "name": "BotProfile",
@@ -757,7 +757,7 @@
             "type": "String"
           }
         ],
-        "description": "Bot profile in the Membrane Slack Driver."
+        "description": "Profile information of a Slack bot."
       },
       {
         "name": "Reaction",
@@ -779,7 +779,7 @@
             "description": "List of users who reacted in the Membrane Slack Driver."
           }
         ],
-        "description": "Reaction in the Membrane Slack Driver."
+        "description": "Representation of a reaction to a message in a Slack channel."
       },
       {
         "name": "Topic",
@@ -800,7 +800,7 @@
             "description": "Timestamp of the last set topic in the Membrane Slack Driver."
           }
         ],
-        "description": "Topic in the Membrane Slack Driver."
+        "description": "Representation of a topic in a Slack channel."
       },
       {
         "name": "SlashCommand",
@@ -816,7 +816,7 @@
             "description": "Text associated with the slash command in the Membrane Slack Driver."
           }
         ],
-        "description": "Slash command in the Membrane Slack Driver."
+        "description": "Representation of a slash command in a Slack channel."
       },
       {
         "name": "WebhookEvent",
@@ -826,11 +826,11 @@
             "type": "String"
           }
         ],
-        "description": "Webhook event in the Membrane Slack Driver."
+        "description": "Representation of a webhook event in a Slack channel."
       },
       {
         "name": "Member",
-        "description": "Member in the Membrane Slack Driver."
+        "description": "Representation of a member in a Slack channel."
       },
       {
         "name": "Tests",
@@ -844,7 +844,7 @@
             "type": "Boolean"
           }
         ],
-        "description": "Tests for the Membrane Slack Driver."
+        "description": "Representation of a test case for the Slack driver."
       }
     ]
   }
