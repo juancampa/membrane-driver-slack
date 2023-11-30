@@ -367,12 +367,12 @@
           {
             "name": "onSlashCommand",
             "type": "SlashCommand",
-            "description": "Slash command in the Membrane Slack Driver."
+            "description": "Triggered when a slash command is used in a Slack channel."
           },
           {
             "name": "onEvent",
             "type": "WebhookEvent",
-            "description": "Webhook event in the Membrane Slack Driver."
+            "description": "Triggered when a webhook event occurs in a Slack channel."
           }
         ],
         "description": "Representation of a Slack channel."
