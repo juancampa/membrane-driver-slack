@@ -76,17 +76,17 @@
           {
             "name": "status",
             "type": "String",
-            "description": "The status of the Slack driver, indicating its current state of operation."
+            "description": "Current operational status of the Slack driver."
           },
           {
             "name": "channels",
             "type": "ChannelCollection",
-            "description": "Collection of channels available in the Slack workspace for interaction and messaging."
+            "description": "A collection of Slack channels that can be interacted with."
           },
           {
             "name": "users",
             "type": "UserCollection",
-            "description": "Collection of users available in the Slack workspace for interaction and messaging."
+            "description": "A collection of Slack users available for messaging and interactions."
           },
           {
             "name": "parse",
@@ -108,12 +108,12 @@
                 "type": "String"
               }
             ],
-            "description": "List of user-defined parsing rules for processing Slack messages and interactions."
+            "description": "A list of custom parsing rules for Slack message processing."
           },
           {
             "name": "tests",
             "type": "Tests",
-            "description": "Tests for the functionality and integration of the Slack driver with Slack channels and messages."
+            "description": "A suite of tests to verify the Slack driver's functionality and integration."
           }
         ]
       },
@@ -129,7 +129,7 @@
                 "type": "String"
               }
             ],
-            "description": "Retrieves a single channel from the collection based on the provided channel ID."
+            "description": "Fetches a specific Slack channel by its unique identifier."
           },
           {
             "name": "page",
@@ -146,7 +146,7 @@
                 "optional": true
               }
             ],
-            "description": "Retrieves a page of channels from the collection, with optional cursor and limit parameters for pagination."
+            "description": "Retrieves a paginated list of Slack channels."
           }
         ],
         "actions": [
@@ -164,7 +164,7 @@
                 "optional": true
               }
             ],
-            "description": "Creates a new channel in the Slack workspace with the specified name and privacy settings."
+            "description": "Initiates the creation of a new Slack channel with options for naming and privacy."
           }
         ],
         "description": "Collection of channels in the Slack workspace."
@@ -176,13 +176,13 @@
             "name": "items",
             "type": "List",
             "ofType": "Channel",
-            "description": "List of channels included in the current page of the channel collection."
+            "description": "Channels present on the current page."
           },
           {
             "name": "next",
             "type": "Ref",
             "ofType": "ChannelPage",
-            "description": "Reference to the next page of channels in the channel collection for pagination."
+            "description": "Link to the next set of channels in the pagination sequence."
           }
         ],
         "description": "Page of channels in the Slack workspace."
@@ -230,66 +230,81 @@
           },
           {
             "name": "created",
-            "type": "Int"
+            "type": "Int",
+            "description": "Timestamp of when the channel was created."
           },
           {
             "name": "is_archived",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the channel has been archived."
           },
           {
             "name": "is_general",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Denotes if the channel is the general channel for the workspace."
           },
           {
             "name": "unlinked",
-            "type": "Int"
+            "type": "Int",
+            "description": "Timestamp of when the channel was unlinked."
           },
           {
             "name": "is_shared",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the channel is shared with other workspaces."
           },
           {
             "name": "is_org_shared",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the channel is shared across the organization."
           },
           {
             "name": "is_pending_ext_shared",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if there is a pending external share of the channel."
           },
           {
             "name": "is_read_only",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the channel is read-only."
           },
           {
             "name": "is_thread_only",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the channel is thread-only."
           },
           {
             "name": "is_member",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the driver is a member of the channel."
           },
           {
             "name": "is_ext_shared",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the channel is externally shared."
           },
           {
             "name": "is_non_threadable",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the channel does not support threading."
           },
           {
             "name": "shared_team_ids",
             "type": "List",
-            "ofType": "String"
+            "ofType": "String",
+            "description": "List of team IDs with which the channel is shared."
           },
           {
             "name": "pending_connected_team_ids",
             "type": "List",
-            "ofType": "String"
+            "ofType": "String",
+            "description": "List of team IDs that have a pending connection to the channel."
           },
           {
             "name": "previous_names",
             "type": "List",
-            "ofType": "String"
+            "ofType": "String",
+            "description": "List of previous names the channel has had."
           },
           {
             "name": "topic",
@@ -373,7 +388,8 @@
                 "name": "id",
                 "type": "String"
               }
-            ]
+            ],
+            "description": "Retrieves a single user from the Slack workspace by their unique ID."
           },
           {
             "name": "page",
@@ -389,7 +405,8 @@
                 "type": "Int",
                 "optional": true
               }
-            ]
+            ],
+            "description": "Provides a paginated list of users from the Slack workspace."
           }
         ],
         "description": "Collection of users in the Slack workspace."
@@ -400,12 +417,14 @@
           {
             "name": "items",
             "type": "List",
-            "ofType": "User"
+            "ofType": "User",
+            "description": "List of users included in the current page."
           },
           {
             "name": "next",
             "type": "Ref",
-            "ofType": "UserPage"
+            "ofType": "UserPage",
+            "description": "Reference to the next page of users for continued pagination."
           }
         ],
         "description": "Page of users in the Slack workspace."
@@ -426,67 +445,83 @@
           },
           {
             "name": "team_id",
-            "type": "String"
+            "type": "String",
+            "description": "The unique identifier of the Slack team to which the user belongs."
           },
           {
             "name": "deleted",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates whether the user has been deleted from the Slack workspace."
           },
           {
             "name": "color",
-            "type": "String"
+            "type": "String",
+            "description": "The user's associated color in the Slack workspace."
           },
           {
             "name": "real_name",
-            "type": "String"
+            "type": "String",
+            "description": "The real name of the user as provided in their Slack profile."
           },
           {
             "name": "tz",
-            "type": "String"
+            "type": "String",
+            "description": "The time zone identifier for the user's location."
           },
           {
             "name": "tz_label",
-            "type": "String"
+            "type": "String",
+            "description": "The label of the user's time zone."
           },
           {
             "name": "tz_offset",
-            "type": "Int"
+            "type": "Int",
+            "description": "The time zone offset in seconds for the user's location."
           },
           {
             "name": "is_admin",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the user has admin privileges in the Slack workspace."
           },
           {
             "name": "is_owner",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the user is an owner of the Slack workspace."
           },
           {
             "name": "is_primary_owner",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the user is the primary owner of the Slack workspace."
           },
           {
             "name": "is_restricted",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the user has restricted access in the Slack workspace."
           },
           {
             "name": "is_ultra_restricted",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the user has ultra-restricted access in the Slack workspace."
           },
           {
             "name": "is_bot",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Denotes if the user is a bot in the Slack workspace."
           },
           {
             "name": "is_app_user",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the user is an app user in the Slack workspace."
           },
           {
             "name": "updated",
-            "type": "Int"
+            "type": "Int",
+            "description": "Timestamp of the last update to the user's profile."
           },
           {
             "name": "has_2fa",
-            "type": "Boolean"
+            "type": "Boolean",
+            "description": "Indicates if the user has two-factor authentication enabled."
           },
           {
             "name": "profile",
