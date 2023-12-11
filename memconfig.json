@@ -719,47 +719,57 @@
         "fields": [
           {
             "name": "type",
-            "type": "String"
+            "type": "String",
+            "description": "The type of the message."
           },
           {
             "name": "subtype",
-            "type": "String"
+            "type": "String",
+            "description": "The subtype of the message."
           },
           {
             "name": "ts",
-            "type": "String"
+            "type": "String",
+            "description": "The timestamp of the message."
           },
           {
             "name": "user",
-            "type": "String"
+            "type": "String",
+            "description": "The user who sent the message."
           },
           {
             "name": "username",
-            "type": "String"
+            "type": "String",
+            "description": "The username of the user who sent the message."
           },
           {
             "name": "bot_id",
-            "type": "String"
+            "type": "String",
+            "description": "The ID of the bot that sent the message."
           },
           {
             "name": "deleted_ts",
-            "type": "String"
+            "type": "String",
+            "description": "The timestamp when the message was deleted."
           },
           {
             "name": "text",
             "type": "String",
             "hints": {
               "primary": true
-            }
+            },
+            "description": "The text content of the message."
           },
           {
             "name": "bot_profile",
-            "type": "BotProfile"
+            "type": "BotProfile",
+            "description": "The profile of the bot that sent the message."
           },
           {
             "name": "reactions",
             "type": "List",
-            "ofType": "Reaction"
+            "ofType": "Reaction",
+            "description": "The reactions to the message."
           }
         ],
         "description": "Representation of a message in a Slack channel."
