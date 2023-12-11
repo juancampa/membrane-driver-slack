@@ -557,63 +557,78 @@
         "fields": [
           {
             "name": "real_name",
-            "type": "String"
+            "type": "String",
+            "description": "The real name of the Slack user."
           },
           {
             "name": "real_name_normalized",
-            "type": "String"
+            "type": "String",
+            "description": "The normalized real name of the Slack user."
           },
           {
             "name": "display_name",
-            "type": "String"
+            "type": "String",
+            "description": "The display name of the Slack user."
           },
           {
             "name": "display_name_normalized",
-            "type": "String"
+            "type": "String",
+            "description": "The normalized display name of the Slack user."
           },
           {
             "name": "status_text",
-            "type": "String"
+            "type": "String",
+            "description": "The status text of the Slack user."
           },
           {
             "name": "status_emoji",
-            "type": "String"
+            "type": "String",
+            "description": "The status emoji of the Slack user."
           },
           {
             "name": "avatar_hash",
-            "type": "String"
+            "type": "String",
+            "description": "The avatar hash of the Slack user."
           },
           {
             "name": "image_original",
-            "type": "String"
+            "type": "String",
+            "description": "The original image of the Slack user."
           },
           {
             "name": "email",
-            "type": "String"
+            "type": "String",
+            "description": "The email of the Slack user."
           },
           {
             "name": "image_24",
-            "type": "String"
+            "type": "String",
+            "description": "The 24x24 image of the Slack user."
           },
           {
             "name": "image_32",
-            "type": "String"
+            "type": "String",
+            "description": "The 32x32 image of the Slack user."
           },
           {
             "name": "image_48",
-            "type": "String"
+            "type": "String",
+            "description": "The 48x48 image of the Slack user."
           },
           {
             "name": "image_72",
-            "type": "String"
+            "type": "String",
+            "description": "The 72x72 image of the Slack user."
           },
           {
             "name": "image_192",
-            "type": "String"
+            "type": "String",
+            "description": "The 192x192 image of the Slack user."
           },
           {
             "name": "image_512",
-            "type": "String"
+            "type": "String",
+            "description": "The 512x512 image of the Slack user."
           }
         ],
         "description": "Profile information of a Slack user."
