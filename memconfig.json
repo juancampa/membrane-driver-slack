@@ -26,7 +26,7 @@
     "types": [
       {
         "name": "Root",
-        "description": "Type representing the root of the Slack driver.",
+        "description": "Slack Driver",
         "actions": [
           {
             "name": "configure",
