@@ -536,15 +536,23 @@
             "params": [
               {
                 "name": "text",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "attachments",
-                "type": "String"
+                "type": "String",
+                "optional": true
               },
               {
                 "name": "blocks",
-                "type": "String"
+                "type": "String",
+                "optional": true
+              },
+              {
+                "name": "channel",
+                "type": "String",
+                "optional": true
               }
             ],
             "description": "Sends a direct message to a Slack user with optional formatting."

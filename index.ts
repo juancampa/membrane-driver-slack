@@ -1,4 +1,4 @@
-import { state, nodes, root } from "membrane";
+import { state, root } from "membrane";
 
 async function api(
   method: "GET" | "POST",
@@ -182,6 +182,11 @@ export const User = {
     return root.users.one({ id: obj.id });
   },
   sendMessage: async (args, { self }) => {
+    if (args.channel) {
+      await api("POST", "chat.postMessage", null, args);
+      return;
+    }
+
     const { id } = self.$argsAt(root.users.one);
     const res = await api("POST", "conversations.open", null, {
       users: id,
